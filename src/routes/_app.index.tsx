@@ -100,8 +100,8 @@ function Dashboard() {
                 <YAxis tickLine={false} axisLine={false} fontSize={12} />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="Teacher" fill="var(--primary)" radius={[6, 6, 0, 0]} />
-                <Bar dataKey="Student" fill="var(--brand-green)" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="Teacher" fill="#1A1A80" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="Student" fill="#00A651" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -113,8 +113,8 @@ function Dashboard() {
             <ResponsiveContainer>
               <PieChart>
                 <Pie data={genderData} innerRadius={60} outerRadius={85} dataKey="value" paddingAngle={4}>
-                  <Cell fill="var(--primary)" />
-                  <Cell fill="var(--brand-green)" />
+                  <Cell fill="#1A1A80" />
+                  <Cell fill="#00A651" />
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
