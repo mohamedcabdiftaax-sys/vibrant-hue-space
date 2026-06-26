@@ -11,18 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
-import { Route as AppTransportRouteImport } from './routes/_app.transport'
-import { Route as AppTeachersRouteImport } from './routes/_app.teachers'
-import { Route as AppSubjectRouteImport } from './routes/_app.subject'
-import { Route as AppStudentsRouteImport } from './routes/_app.students'
-import { Route as AppRoutineRouteImport } from './routes/_app.routine'
-import { Route as AppNoticeRouteImport } from './routes/_app.notice'
-import { Route as AppLibraryRouteImport } from './routes/_app.library'
-import { Route as AppHostelRouteImport } from './routes/_app.hostel'
-import { Route as AppExamRouteImport } from './routes/_app.exam'
-import { Route as AppClassRouteImport } from './routes/_app.class'
-import { Route as AppAttendanceRouteImport } from './routes/_app.attendance'
-import { Route as AppAccountRouteImport } from './routes/_app.account'
+import { Route as AppSifayntaRouteImport } from './routes/_app.sifaynta'
+import { Route as AppMaaliyaddaRouteImport } from './routes/_app.maaliyadda'
+import { Route as AppKalandarRouteImport } from './routes/_app.kalandar'
+import { Route as AppImtixaanadaRouteImport } from './routes/_app.imtixaanada'
+import { Route as AppGaadiidkaRouteImport } from './routes/_app.gaadiidka'
+import { Route as AppFasalladaRouteImport } from './routes/_app.fasallada'
+import { Route as AppCasharkaRouteImport } from './routes/_app.casharka'
+import { Route as AppArdaydaRouteImport } from './routes/_app.ardayda'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -33,160 +29,116 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
-const AppTransportRoute = AppTransportRouteImport.update({
-  id: '/transport',
-  path: '/transport',
+const AppSifayntaRoute = AppSifayntaRouteImport.update({
+  id: '/sifaynta',
+  path: '/sifaynta',
   getParentRoute: () => AppRoute,
 } as any)
-const AppTeachersRoute = AppTeachersRouteImport.update({
-  id: '/teachers',
-  path: '/teachers',
+const AppMaaliyaddaRoute = AppMaaliyaddaRouteImport.update({
+  id: '/maaliyadda',
+  path: '/maaliyadda',
   getParentRoute: () => AppRoute,
 } as any)
-const AppSubjectRoute = AppSubjectRouteImport.update({
-  id: '/subject',
-  path: '/subject',
+const AppKalandarRoute = AppKalandarRouteImport.update({
+  id: '/kalandar',
+  path: '/kalandar',
   getParentRoute: () => AppRoute,
 } as any)
-const AppStudentsRoute = AppStudentsRouteImport.update({
-  id: '/students',
-  path: '/students',
+const AppImtixaanadaRoute = AppImtixaanadaRouteImport.update({
+  id: '/imtixaanada',
+  path: '/imtixaanada',
   getParentRoute: () => AppRoute,
 } as any)
-const AppRoutineRoute = AppRoutineRouteImport.update({
-  id: '/routine',
-  path: '/routine',
+const AppGaadiidkaRoute = AppGaadiidkaRouteImport.update({
+  id: '/gaadiidka',
+  path: '/gaadiidka',
   getParentRoute: () => AppRoute,
 } as any)
-const AppNoticeRoute = AppNoticeRouteImport.update({
-  id: '/notice',
-  path: '/notice',
+const AppFasalladaRoute = AppFasalladaRouteImport.update({
+  id: '/fasallada',
+  path: '/fasallada',
   getParentRoute: () => AppRoute,
 } as any)
-const AppLibraryRoute = AppLibraryRouteImport.update({
-  id: '/library',
-  path: '/library',
+const AppCasharkaRoute = AppCasharkaRouteImport.update({
+  id: '/casharka',
+  path: '/casharka',
   getParentRoute: () => AppRoute,
 } as any)
-const AppHostelRoute = AppHostelRouteImport.update({
-  id: '/hostel',
-  path: '/hostel',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppExamRoute = AppExamRouteImport.update({
-  id: '/exam',
-  path: '/exam',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppClassRoute = AppClassRouteImport.update({
-  id: '/class',
-  path: '/class',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAttendanceRoute = AppAttendanceRouteImport.update({
-  id: '/attendance',
-  path: '/attendance',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAccountRoute = AppAccountRouteImport.update({
-  id: '/account',
-  path: '/account',
+const AppArdaydaRoute = AppArdaydaRouteImport.update({
+  id: '/ardayda',
+  path: '/ardayda',
   getParentRoute: () => AppRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
-  '/account': typeof AppAccountRoute
-  '/attendance': typeof AppAttendanceRoute
-  '/class': typeof AppClassRoute
-  '/exam': typeof AppExamRoute
-  '/hostel': typeof AppHostelRoute
-  '/library': typeof AppLibraryRoute
-  '/notice': typeof AppNoticeRoute
-  '/routine': typeof AppRoutineRoute
-  '/students': typeof AppStudentsRoute
-  '/subject': typeof AppSubjectRoute
-  '/teachers': typeof AppTeachersRoute
-  '/transport': typeof AppTransportRoute
+  '/ardayda': typeof AppArdaydaRoute
+  '/casharka': typeof AppCasharkaRoute
+  '/fasallada': typeof AppFasalladaRoute
+  '/gaadiidka': typeof AppGaadiidkaRoute
+  '/imtixaanada': typeof AppImtixaanadaRoute
+  '/kalandar': typeof AppKalandarRoute
+  '/maaliyadda': typeof AppMaaliyaddaRoute
+  '/sifaynta': typeof AppSifayntaRoute
 }
 export interface FileRoutesByTo {
-  '/account': typeof AppAccountRoute
-  '/attendance': typeof AppAttendanceRoute
-  '/class': typeof AppClassRoute
-  '/exam': typeof AppExamRoute
-  '/hostel': typeof AppHostelRoute
-  '/library': typeof AppLibraryRoute
-  '/notice': typeof AppNoticeRoute
-  '/routine': typeof AppRoutineRoute
-  '/students': typeof AppStudentsRoute
-  '/subject': typeof AppSubjectRoute
-  '/teachers': typeof AppTeachersRoute
-  '/transport': typeof AppTransportRoute
+  '/ardayda': typeof AppArdaydaRoute
+  '/casharka': typeof AppCasharkaRoute
+  '/fasallada': typeof AppFasalladaRoute
+  '/gaadiidka': typeof AppGaadiidkaRoute
+  '/imtixaanada': typeof AppImtixaanadaRoute
+  '/kalandar': typeof AppKalandarRoute
+  '/maaliyadda': typeof AppMaaliyaddaRoute
+  '/sifaynta': typeof AppSifayntaRoute
   '/': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
-  '/_app/account': typeof AppAccountRoute
-  '/_app/attendance': typeof AppAttendanceRoute
-  '/_app/class': typeof AppClassRoute
-  '/_app/exam': typeof AppExamRoute
-  '/_app/hostel': typeof AppHostelRoute
-  '/_app/library': typeof AppLibraryRoute
-  '/_app/notice': typeof AppNoticeRoute
-  '/_app/routine': typeof AppRoutineRoute
-  '/_app/students': typeof AppStudentsRoute
-  '/_app/subject': typeof AppSubjectRoute
-  '/_app/teachers': typeof AppTeachersRoute
-  '/_app/transport': typeof AppTransportRoute
+  '/_app/ardayda': typeof AppArdaydaRoute
+  '/_app/casharka': typeof AppCasharkaRoute
+  '/_app/fasallada': typeof AppFasalladaRoute
+  '/_app/gaadiidka': typeof AppGaadiidkaRoute
+  '/_app/imtixaanada': typeof AppImtixaanadaRoute
+  '/_app/kalandar': typeof AppKalandarRoute
+  '/_app/maaliyadda': typeof AppMaaliyaddaRoute
+  '/_app/sifaynta': typeof AppSifayntaRoute
   '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/account'
-    | '/attendance'
-    | '/class'
-    | '/exam'
-    | '/hostel'
-    | '/library'
-    | '/notice'
-    | '/routine'
-    | '/students'
-    | '/subject'
-    | '/teachers'
-    | '/transport'
+    | '/ardayda'
+    | '/casharka'
+    | '/fasallada'
+    | '/gaadiidka'
+    | '/imtixaanada'
+    | '/kalandar'
+    | '/maaliyadda'
+    | '/sifaynta'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/account'
-    | '/attendance'
-    | '/class'
-    | '/exam'
-    | '/hostel'
-    | '/library'
-    | '/notice'
-    | '/routine'
-    | '/students'
-    | '/subject'
-    | '/teachers'
-    | '/transport'
+    | '/ardayda'
+    | '/casharka'
+    | '/fasallada'
+    | '/gaadiidka'
+    | '/imtixaanada'
+    | '/kalandar'
+    | '/maaliyadda'
+    | '/sifaynta'
     | '/'
   id:
     | '__root__'
     | '/_app'
-    | '/_app/account'
-    | '/_app/attendance'
-    | '/_app/class'
-    | '/_app/exam'
-    | '/_app/hostel'
-    | '/_app/library'
-    | '/_app/notice'
-    | '/_app/routine'
-    | '/_app/students'
-    | '/_app/subject'
-    | '/_app/teachers'
-    | '/_app/transport'
+    | '/_app/ardayda'
+    | '/_app/casharka'
+    | '/_app/fasallada'
+    | '/_app/gaadiidka'
+    | '/_app/imtixaanada'
+    | '/_app/kalandar'
+    | '/_app/maaliyadda'
+    | '/_app/sifaynta'
     | '/_app/'
   fileRoutesById: FileRoutesById
 }
@@ -210,122 +162,86 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/transport': {
-      id: '/_app/transport'
-      path: '/transport'
-      fullPath: '/transport'
-      preLoaderRoute: typeof AppTransportRouteImport
+    '/_app/sifaynta': {
+      id: '/_app/sifaynta'
+      path: '/sifaynta'
+      fullPath: '/sifaynta'
+      preLoaderRoute: typeof AppSifayntaRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/teachers': {
-      id: '/_app/teachers'
-      path: '/teachers'
-      fullPath: '/teachers'
-      preLoaderRoute: typeof AppTeachersRouteImport
+    '/_app/maaliyadda': {
+      id: '/_app/maaliyadda'
+      path: '/maaliyadda'
+      fullPath: '/maaliyadda'
+      preLoaderRoute: typeof AppMaaliyaddaRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/subject': {
-      id: '/_app/subject'
-      path: '/subject'
-      fullPath: '/subject'
-      preLoaderRoute: typeof AppSubjectRouteImport
+    '/_app/kalandar': {
+      id: '/_app/kalandar'
+      path: '/kalandar'
+      fullPath: '/kalandar'
+      preLoaderRoute: typeof AppKalandarRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/students': {
-      id: '/_app/students'
-      path: '/students'
-      fullPath: '/students'
-      preLoaderRoute: typeof AppStudentsRouteImport
+    '/_app/imtixaanada': {
+      id: '/_app/imtixaanada'
+      path: '/imtixaanada'
+      fullPath: '/imtixaanada'
+      preLoaderRoute: typeof AppImtixaanadaRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/routine': {
-      id: '/_app/routine'
-      path: '/routine'
-      fullPath: '/routine'
-      preLoaderRoute: typeof AppRoutineRouteImport
+    '/_app/gaadiidka': {
+      id: '/_app/gaadiidka'
+      path: '/gaadiidka'
+      fullPath: '/gaadiidka'
+      preLoaderRoute: typeof AppGaadiidkaRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/notice': {
-      id: '/_app/notice'
-      path: '/notice'
-      fullPath: '/notice'
-      preLoaderRoute: typeof AppNoticeRouteImport
+    '/_app/fasallada': {
+      id: '/_app/fasallada'
+      path: '/fasallada'
+      fullPath: '/fasallada'
+      preLoaderRoute: typeof AppFasalladaRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/library': {
-      id: '/_app/library'
-      path: '/library'
-      fullPath: '/library'
-      preLoaderRoute: typeof AppLibraryRouteImport
+    '/_app/casharka': {
+      id: '/_app/casharka'
+      path: '/casharka'
+      fullPath: '/casharka'
+      preLoaderRoute: typeof AppCasharkaRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/hostel': {
-      id: '/_app/hostel'
-      path: '/hostel'
-      fullPath: '/hostel'
-      preLoaderRoute: typeof AppHostelRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/exam': {
-      id: '/_app/exam'
-      path: '/exam'
-      fullPath: '/exam'
-      preLoaderRoute: typeof AppExamRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/class': {
-      id: '/_app/class'
-      path: '/class'
-      fullPath: '/class'
-      preLoaderRoute: typeof AppClassRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/attendance': {
-      id: '/_app/attendance'
-      path: '/attendance'
-      fullPath: '/attendance'
-      preLoaderRoute: typeof AppAttendanceRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/account': {
-      id: '/_app/account'
-      path: '/account'
-      fullPath: '/account'
-      preLoaderRoute: typeof AppAccountRouteImport
+    '/_app/ardayda': {
+      id: '/_app/ardayda'
+      path: '/ardayda'
+      fullPath: '/ardayda'
+      preLoaderRoute: typeof AppArdaydaRouteImport
       parentRoute: typeof AppRoute
     }
   }
 }
 
 interface AppRouteChildren {
-  AppAccountRoute: typeof AppAccountRoute
-  AppAttendanceRoute: typeof AppAttendanceRoute
-  AppClassRoute: typeof AppClassRoute
-  AppExamRoute: typeof AppExamRoute
-  AppHostelRoute: typeof AppHostelRoute
-  AppLibraryRoute: typeof AppLibraryRoute
-  AppNoticeRoute: typeof AppNoticeRoute
-  AppRoutineRoute: typeof AppRoutineRoute
-  AppStudentsRoute: typeof AppStudentsRoute
-  AppSubjectRoute: typeof AppSubjectRoute
-  AppTeachersRoute: typeof AppTeachersRoute
-  AppTransportRoute: typeof AppTransportRoute
+  AppArdaydaRoute: typeof AppArdaydaRoute
+  AppCasharkaRoute: typeof AppCasharkaRoute
+  AppFasalladaRoute: typeof AppFasalladaRoute
+  AppGaadiidkaRoute: typeof AppGaadiidkaRoute
+  AppImtixaanadaRoute: typeof AppImtixaanadaRoute
+  AppKalandarRoute: typeof AppKalandarRoute
+  AppMaaliyaddaRoute: typeof AppMaaliyaddaRoute
+  AppSifayntaRoute: typeof AppSifayntaRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppAccountRoute: AppAccountRoute,
-  AppAttendanceRoute: AppAttendanceRoute,
-  AppClassRoute: AppClassRoute,
-  AppExamRoute: AppExamRoute,
-  AppHostelRoute: AppHostelRoute,
-  AppLibraryRoute: AppLibraryRoute,
-  AppNoticeRoute: AppNoticeRoute,
-  AppRoutineRoute: AppRoutineRoute,
-  AppStudentsRoute: AppStudentsRoute,
-  AppSubjectRoute: AppSubjectRoute,
-  AppTeachersRoute: AppTeachersRoute,
-  AppTransportRoute: AppTransportRoute,
+  AppArdaydaRoute: AppArdaydaRoute,
+  AppCasharkaRoute: AppCasharkaRoute,
+  AppFasalladaRoute: AppFasalladaRoute,
+  AppGaadiidkaRoute: AppGaadiidkaRoute,
+  AppImtixaanadaRoute: AppImtixaanadaRoute,
+  AppKalandarRoute: AppKalandarRoute,
+  AppMaaliyaddaRoute: AppMaaliyaddaRoute,
+  AppSifayntaRoute: AppSifayntaRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
