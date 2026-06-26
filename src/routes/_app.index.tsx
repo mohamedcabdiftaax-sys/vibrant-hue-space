@@ -1,182 +1,182 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { PageHeader } from "@/components/dashboard-layout";
-import { UserCheck, UserX, Wallet, AlertTriangle, Clock } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Users, Bus, Wallet, AlertTriangle, UserPlus, Receipt, ClipboardList, ChevronLeft, ChevronRight } from "lucide-react";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/")({
-  head: () => ({
-    meta: [
-      { title: "Admin Dashboard – ia Academy" },
-      { name: "description", content: "Manage students, teachers, exams and finances from one place." },
-    ],
-  }),
   component: Dashboard,
 });
 
-const stats = [
-  { label: "Joog (Present)", value: "1,284", sub: "Maanta", icon: UserCheck, color: "bg-brand-green/15 text-brand-green" },
-  { label: "Maqan (Absent)", value: "96", sub: "Maanta", icon: UserX, color: "bg-rose-100 text-rose-600" },
-  { label: "Lacag La Bixiyay", value: "$12,450", sub: "Bishan", icon: Wallet, color: "bg-primary/10 text-primary" },
-  { label: "Deyn Ardayda", value: "$3,820", sub: "24 arday", icon: AlertTriangle, color: "bg-amber-100 text-amber-600" },
-];
-
-const attendanceRows = [
-  { name: "Eleanor Pena", class: "01", status: "Joog", time: "07:42" },
-  { name: "Jessia Rose", class: "02", status: "Joog", time: "07:51" },
-  { name: "Janny Wilson", class: "02", status: "Daahay", time: "08:22" },
-  { name: "Guy Hawkins", class: "02", status: "Maqan", time: "—" },
-  { name: "Jacob Jones", class: "04", status: "Joog", time: "07:35" },
-  { name: "Floyd Miles", class: "03", status: "Maqan", time: "—" },
-];
-
-const payments = [
-  { name: "Eleanor Pena", class: "01", amount: 120, status: "La bixiyay" },
-  { name: "Jessia Rose", class: "02", amount: 120, status: "La bixiyay" },
-  { name: "Janny Wilson", class: "02", amount: 120, status: "Deyn" },
-  { name: "Jacob Jones", class: "04", amount: 150, status: "Qayb" },
-  { name: "Floyd Miles", class: "03", amount: 120, status: "Deyn" },
-];
-
-const complaints = [
-  { name: "Guy Hawkins", title: "Buug la waayey", note: "Maktabada lagama helin buugga xisaabta.", time: "10 daqiiqo" },
-  { name: "Jessia Rose", title: "Macalin daahay", note: "Casharka 3aad wuxuu daahay 20 daqiiqo.", time: "Saakay" },
-  { name: "Eleanor Pena", title: "Cunto xun", note: "Quraacda maanta cabasho leh.", time: "Shalay" },
-];
-
-const updates = [
-  { title: "Liiska natiijada imtixaanka la daabacay", time: "2 daqiiqo ka hor" },
-  { title: "Arday cusub oo la diiwaan geliyay – Liam Carter", time: "25 daqiiqo ka hor" },
-  { title: "Macalin Asha lacagta mushaharka la siiyay", time: "Saakay 09:12" },
-  { title: "Fasalka 4-aad routine cusub", time: "Shalay" },
-];
-
-const statusTone: Record<string, string> = {
-  Joog: "bg-brand-green/10 text-brand-green",
-  Maqan: "bg-rose-100 text-rose-600",
-  Daahay: "bg-amber-100 text-amber-600",
-  "La bixiyay": "bg-brand-green/10 text-brand-green",
-  Deyn: "bg-rose-100 text-rose-600",
-  Qayb: "bg-amber-100 text-amber-600",
-};
+function useDashboardStats() {
+  return useQuery({
+    queryKey: ["dashboard-stats"],
+    queryFn: async () => {
+      const [students, riders, expenses, unpaid] = await Promise.all([
+        supabase.from("students").select("id", { count: "exact", head: true }).eq("is_active", true),
+        supabase.from("students").select("id", { count: "exact", head: true }).eq("uses_bus", true).eq("is_active", true),
+        supabase.from("expenses").select("amount"),
+        supabase.from("tuition_payments").select("id", { count: "exact", head: true }).eq("paid", false),
+      ]);
+      const expenseTotal = (expenses.data || []).reduce((s, r: any) => s + Number(r.amount || 0), 0);
+      return {
+        activeStudents: students.count || 0,
+        busRiders: riders.count || 0,
+        expenseTotal,
+        unpaidCount: unpaid.count || 0,
+      };
+    },
+  });
+}
 
 function Dashboard() {
+  const { data } = useDashboardStats();
+  const navigate = useNavigate();
+  const stats = [
+    { label: "Ardayda Firfircoon", value: data?.activeStudents ?? 0, icon: Users, tone: "bg-primary/10 text-primary" },
+    { label: "Raacayaasha Bus-ka", value: data?.busRiders ?? 0, icon: Bus, tone: "bg-brand-green/15 text-brand-green" },
+    { label: "Wadarta Kharashka", value: `$${(data?.expenseTotal ?? 0).toLocaleString()}`, icon: Wallet, tone: "bg-amber-100 text-amber-700" },
+    { label: "Deyn / Resto", value: data?.unpaidCount ?? 0, icon: AlertTriangle, tone: "bg-rose-100 text-rose-700", warn: true },
+  ];
   return (
     <div className="space-y-6">
-      <PageHeader title="Dashboard" breadcrumb="Home / Guudmar" />
-
+      <PageHeader title="Dashboard-ka Guud" breadcrumb="Bogga Hore / Guudmar" />
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((s) => (
-          <div key={s.label} className="rounded-2xl bg-card border border-border p-5 flex items-center justify-between shadow-sm">
-            <div>
-              <div className="text-xs text-muted-foreground">{s.label}</div>
-              <div className="text-2xl font-bold text-primary mt-1">{s.value}</div>
-              <div className="text-[11px] text-muted-foreground mt-0.5">{s.sub}</div>
-            </div>
-            <div className={`size-12 rounded-xl grid place-items-center ${s.color}`}>
-              <s.icon className="size-6" />
+          <div key={s.label} className={`rounded-2xl border p-5 shadow-sm bg-card ${s.warn ? "border-rose-200" : "border-border"}`}>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-xs text-muted-foreground font-medium">{s.label}</div>
+                <div className={`text-2xl font-bold mt-1 ${s.warn ? "text-rose-700" : "text-primary"}`}>{s.value}</div>
+              </div>
+              <div className={`size-12 rounded-xl grid place-items-center ${s.tone}`}>
+                <s.icon className="size-6" />
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 rounded-2xl bg-card border border-border p-5 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <div className="font-semibold text-primary">Xaalada Maqnaashaha Ardayda</div>
-              <div className="text-xs text-muted-foreground">Diiwaanka maanta</div>
-            </div>
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div className="lg:col-span-3 rounded-2xl bg-card border border-border p-6 shadow-sm">
+          <div className="font-semibold text-primary mb-4 text-lg">Tallaabooyin Degdeg ah</div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <Link to="/ardayda" className="group rounded-xl border-2 border-dashed border-primary/30 hover:border-primary hover:bg-primary/5 p-5 text-center transition">
+              <UserPlus className="size-8 mx-auto text-primary mb-2" />
+              <div className="font-semibold text-primary">+ Diiwaangeli Arday</div>
+              <div className="text-xs text-muted-foreground mt-1">Arday cusub abuur</div>
+            </Link>
+            <Link to="/maaliyadda" className="group rounded-xl border-2 border-dashed border-brand-green/30 hover:border-brand-green hover:bg-brand-green/5 p-5 text-center transition">
+              <Receipt className="size-8 mx-auto text-brand-green mb-2" />
+              <div className="font-semibold text-brand-green">+ Log Expense</div>
+              <div className="text-xs text-muted-foreground mt-1">Kharash cusub kaydi</div>
+            </Link>
+            <Link to="/imtixaanada" className="group rounded-xl border-2 border-dashed border-amber-300 hover:border-amber-500 hover:bg-amber-50 p-5 text-center transition">
+              <ClipboardList className="size-8 mx-auto text-amber-600 mb-2" />
+              <div className="font-semibold text-amber-700">Imtixaan Cusub</div>
+              <div className="text-xs text-muted-foreground mt-1">Buundooyin geli</div>
+            </Link>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="text-xs text-muted-foreground uppercase">
-                <tr className="border-b border-border">
-                  <th className="text-left py-2 font-medium">Magaca</th>
-                  <th className="text-left py-2 font-medium">Fasalka</th>
-                  <th className="text-left py-2 font-medium">Xaalada</th>
-                  <th className="text-left py-2 font-medium">Saac</th>
-                </tr>
-              </thead>
-              <tbody>
-                {attendanceRows.map((r) => (
-                  <tr key={r.name} className="border-b border-border/60 last:border-0">
-                    <td className="py-3 font-medium">{r.name}</td>
-                    <td className="py-3 text-muted-foreground">{r.class}</td>
-                    <td className="py-3">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${statusTone[r.status]}`}>{r.status}</span>
-                    </td>
-                    <td className="py-3 text-muted-foreground">{r.time}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="mt-6 p-4 rounded-xl bg-secondary">
+            <div className="text-sm font-semibold text-primary">Salaan, Maamulkan!</div>
+            <div className="text-xs text-muted-foreground mt-1">Halkan waxaad ka maamuli kartaa dhammaan ardayda, fasallada, iyo maaliyadda dugsigaaga.</div>
           </div>
         </div>
-
-        <div className="rounded-2xl bg-card border border-border p-5 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <div className="font-semibold text-primary">Cabashooyinka Ardayda</div>
-            <span className="text-xs text-rose-600 bg-rose-100 px-2 py-0.5 rounded-full">{complaints.length} cusub</span>
-          </div>
-          <div className="space-y-3">
-            {complaints.map((c) => (
-              <div key={c.title} className="p-3 rounded-xl bg-secondary">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="text-sm font-semibold text-primary">{c.title}</div>
-                  <div className="text-[11px] text-muted-foreground whitespace-nowrap">{c.time}</div>
-                </div>
-                <div className="text-xs text-muted-foreground mt-1">{c.note}</div>
-                <div className="text-[11px] text-primary mt-1">— {c.name}</div>
-              </div>
-            ))}
-          </div>
+        <div className="lg:col-span-2">
+          <CalendarWidget onNavigate={() => navigate({ to: "/kalandar" })} />
         </div>
       </div>
+    </div>
+  );
+}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 rounded-2xl bg-card border border-border p-5 shadow-sm">
-          <div className="font-semibold text-primary mb-4">Lacagaha Ardayda</div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="text-xs text-muted-foreground uppercase">
-                <tr className="border-b border-border">
-                  <th className="text-left py-2 font-medium">Ardayga</th>
-                  <th className="text-left py-2 font-medium">Fasalka</th>
-                  <th className="text-left py-2 font-medium">Qiimaha</th>
-                  <th className="text-left py-2 font-medium">Xaalada</th>
-                </tr>
-              </thead>
-              <tbody>
-                {payments.map((p) => (
-                  <tr key={p.name} className="border-b border-border/60 last:border-0">
-                    <td className="py-3 font-medium">{p.name}</td>
-                    <td className="py-3 text-muted-foreground">{p.class}</td>
-                    <td className="py-3">${p.amount}</td>
-                    <td className="py-3">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${statusTone[p.status]}`}>{p.status}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div className="rounded-2xl bg-card border border-border p-5 shadow-sm">
-          <div className="font-semibold text-primary mb-4">Wax Cusub ee Bogga</div>
-          <div className="space-y-3">
-            {updates.map((u) => (
-              <div key={u.title} className="flex items-start gap-3 p-3 rounded-xl bg-secondary">
-                <div className="size-9 rounded-lg bg-primary/10 text-primary grid place-items-center">
-                  <Clock className="size-4" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-primary">{u.title}</div>
-                  <div className="text-[11px] text-muted-foreground mt-0.5">{u.time}</div>
-                </div>
-              </div>
-            ))}
-          </div>
+function CalendarWidget({ onNavigate }: { onNavigate: () => void }) {
+  const [cursor, setCursor] = useState(() => new Date());
+  const [selected, setSelected] = useState<string | null>(null);
+  const [title, setTitle] = useState("");
+  const year = cursor.getFullYear();
+  const month = cursor.getMonth();
+
+  const days = useMemo(() => {
+    const first = new Date(year, month, 1);
+    const last = new Date(year, month + 1, 0);
+    const startWeekday = first.getDay();
+    const result: (number | null)[] = [];
+    for (let i = 0; i < startWeekday; i++) result.push(null);
+    for (let d = 1; d <= last.getDate(); d++) result.push(d);
+    return result;
+  }, [year, month]);
+
+  const { data: events, refetch } = useQuery({
+    queryKey: ["cal-events", year, month],
+    queryFn: async () => {
+      const from = new Date(year, month, 1).toISOString().slice(0, 10);
+      const to = new Date(year, month + 1, 0).toISOString().slice(0, 10);
+      const { data } = await supabase.from("calendar_events").select("*").gte("event_date", from).lte("event_date", to);
+      return data || [];
+    },
+  });
+
+  const eventDates = new Set((events || []).map((e: any) => e.event_date));
+
+  const saveEvent = async () => {
+    if (!selected || !title.trim()) return;
+    const { error } = await supabase.from("calendar_events").insert({ event_date: selected, title: title.trim() });
+    if (error) toast.error(error.message);
+    else {
+      toast.success("Dhacdada waa la kaydiyay");
+      setTitle("");
+      setSelected(null);
+      refetch();
+    }
+  };
+
+  const monthName = cursor.toLocaleString("en", { month: "long" });
+  return (
+    <div className="rounded-2xl bg-card border border-border p-5 shadow-sm h-full">
+      <div className="flex items-center justify-between mb-3">
+        <button onClick={onNavigate} className="font-semibold text-primary text-sm hover:underline">Kalandarka</button>
+        <div className="flex items-center gap-1">
+          <button onClick={() => setCursor(new Date(year, month - 1, 1))} className="p-1 hover:bg-secondary rounded"><ChevronLeft className="size-4" /></button>
+          <div className="text-sm font-semibold text-primary min-w-[110px] text-center">{monthName} {year}</div>
+          <button onClick={() => setCursor(new Date(year, month + 1, 1))} className="p-1 hover:bg-secondary rounded"><ChevronRight className="size-4" /></button>
         </div>
       </div>
+      <div className="grid grid-cols-7 gap-1 text-[10px] text-muted-foreground text-center mb-1">
+        {["Axd","Isn","Tal","Arb","Kha","Jim","Sab"].map(d => <div key={d}>{d}</div>)}
+      </div>
+      <div className="grid grid-cols-7 gap-1">
+        {days.map((d, i) => {
+          if (!d) return <div key={i} />;
+          const dateStr = `${year}-${String(month + 1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+          const hasEvent = eventDates.has(dateStr);
+          const isSel = selected === dateStr;
+          return (
+            <button
+              key={i}
+              onClick={() => setSelected(dateStr)}
+              className={`aspect-square rounded-md text-xs font-medium transition relative ${isSel ? "bg-primary text-primary-foreground" : "hover:bg-secondary"}`}
+            >
+              {d}
+              {hasEvent && <span className="absolute bottom-1 left-1/2 -translate-x-1/2 size-1 rounded-full bg-brand-green" />}
+            </button>
+          );
+        })}
+      </div>
+      {selected && (
+        <div className="mt-4 p-3 rounded-lg bg-secondary space-y-2">
+          <div className="text-xs font-medium text-primary">Ku dar dhacdo: {selected}</div>
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Magaca dhacdada..."
+            className="w-full px-3 py-1.5 rounded-md bg-card border border-border text-sm outline-none focus:border-primary"
+          />
+          <button onClick={saveEvent} className="w-full py-1.5 rounded-md bg-brand-green text-white text-sm font-medium hover:opacity-90">Kaydi</button>
+        </div>
+      )}
     </div>
   );
 }
