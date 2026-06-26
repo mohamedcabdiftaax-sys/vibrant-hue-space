@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
+import { Route as AppFasalladaRouteImport } from './routes/_app.fasallada'
 import { Route as AppCasharkaRouteImport } from './routes/_app.casharka'
 import { Route as AppArdaydaRouteImport } from './routes/_app.ardayda'
 
@@ -21,6 +22,11 @@ const AppRoute = AppRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFasalladaRoute = AppFasalladaRouteImport.update({
+  id: '/fasallada',
+  path: '/fasallada',
   getParentRoute: () => AppRoute,
 } as any)
 const AppCasharkaRoute = AppCasharkaRouteImport.update({
@@ -38,10 +44,12 @@ export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/ardayda': typeof AppArdaydaRoute
   '/casharka': typeof AppCasharkaRoute
+  '/fasallada': typeof AppFasalladaRoute
 }
 export interface FileRoutesByTo {
   '/ardayda': typeof AppArdaydaRoute
   '/casharka': typeof AppCasharkaRoute
+  '/fasallada': typeof AppFasalladaRoute
   '/': typeof AppIndexRoute
 }
 export interface FileRoutesById {
@@ -49,14 +57,21 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/_app/ardayda': typeof AppArdaydaRoute
   '/_app/casharka': typeof AppCasharkaRoute
+  '/_app/fasallada': typeof AppFasalladaRoute
   '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/ardayda' | '/casharka'
+  fullPaths: '/' | '/ardayda' | '/casharka' | '/fasallada'
   fileRoutesByTo: FileRoutesByTo
-  to: '/ardayda' | '/casharka' | '/'
-  id: '__root__' | '/_app' | '/_app/ardayda' | '/_app/casharka' | '/_app/'
+  to: '/ardayda' | '/casharka' | '/fasallada' | '/'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/_app/ardayda'
+    | '/_app/casharka'
+    | '/_app/fasallada'
+    | '/_app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -79,6 +94,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/fasallada': {
+      id: '/_app/fasallada'
+      path: '/fasallada'
+      fullPath: '/fasallada'
+      preLoaderRoute: typeof AppFasalladaRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/casharka': {
       id: '/_app/casharka'
       path: '/casharka'
@@ -99,12 +121,14 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppArdaydaRoute: typeof AppArdaydaRoute
   AppCasharkaRoute: typeof AppCasharkaRoute
+  AppFasalladaRoute: typeof AppFasalladaRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppArdaydaRoute: AppArdaydaRoute,
   AppCasharkaRoute: AppCasharkaRoute,
+  AppFasalladaRoute: AppFasalladaRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
