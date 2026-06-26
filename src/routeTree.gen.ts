@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
+import { Route as AppSifayntaRouteImport } from './routes/_app.sifaynta'
 import { Route as AppMaaliyaddaRouteImport } from './routes/_app.maaliyadda'
 import { Route as AppKalandarRouteImport } from './routes/_app.kalandar'
 import { Route as AppImtixaanadaRouteImport } from './routes/_app.imtixaanada'
@@ -26,6 +27,11 @@ const AppRoute = AppRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSifayntaRoute = AppSifayntaRouteImport.update({
+  id: '/sifaynta',
+  path: '/sifaynta',
   getParentRoute: () => AppRoute,
 } as any)
 const AppMaaliyaddaRoute = AppMaaliyaddaRouteImport.update({
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/imtixaanada': typeof AppImtixaanadaRoute
   '/kalandar': typeof AppKalandarRoute
   '/maaliyadda': typeof AppMaaliyaddaRoute
+  '/sifaynta': typeof AppSifayntaRoute
 }
 export interface FileRoutesByTo {
   '/ardayda': typeof AppArdaydaRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/imtixaanada': typeof AppImtixaanadaRoute
   '/kalandar': typeof AppKalandarRoute
   '/maaliyadda': typeof AppMaaliyaddaRoute
+  '/sifaynta': typeof AppSifayntaRoute
   '/': typeof AppIndexRoute
 }
 export interface FileRoutesById {
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/_app/imtixaanada': typeof AppImtixaanadaRoute
   '/_app/kalandar': typeof AppKalandarRoute
   '/_app/maaliyadda': typeof AppMaaliyaddaRoute
+  '/_app/sifaynta': typeof AppSifayntaRoute
   '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/imtixaanada'
     | '/kalandar'
     | '/maaliyadda'
+    | '/sifaynta'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/ardayda'
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
     | '/imtixaanada'
     | '/kalandar'
     | '/maaliyadda'
+    | '/sifaynta'
     | '/'
   id:
     | '__root__'
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '/_app/imtixaanada'
     | '/_app/kalandar'
     | '/_app/maaliyadda'
+    | '/_app/sifaynta'
     | '/_app/'
   fileRoutesById: FileRoutesById
 }
@@ -148,6 +160,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/sifaynta': {
+      id: '/_app/sifaynta'
+      path: '/sifaynta'
+      fullPath: '/sifaynta'
+      preLoaderRoute: typeof AppSifayntaRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/maaliyadda': {
@@ -210,6 +229,7 @@ interface AppRouteChildren {
   AppImtixaanadaRoute: typeof AppImtixaanadaRoute
   AppKalandarRoute: typeof AppKalandarRoute
   AppMaaliyaddaRoute: typeof AppMaaliyaddaRoute
+  AppSifayntaRoute: typeof AppSifayntaRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
@@ -221,6 +241,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppImtixaanadaRoute: AppImtixaanadaRoute,
   AppKalandarRoute: AppKalandarRoute,
   AppMaaliyaddaRoute: AppMaaliyaddaRoute,
+  AppSifayntaRoute: AppSifayntaRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
