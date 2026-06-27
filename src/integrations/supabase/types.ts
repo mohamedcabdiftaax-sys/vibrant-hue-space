@@ -46,30 +46,56 @@ export type Database = {
       }
       calendar_events: {
         Row: {
+          assigned_to: string | null
+          completed: boolean
           created_at: string
+          created_by: string | null
           description: string | null
           event_date: string
           event_type: string | null
           id: string
+          item_kind: string
+          location: string | null
+          start_time: string | null
           title: string
         }
         Insert: {
+          assigned_to?: string | null
+          completed?: boolean
           created_at?: string
+          created_by?: string | null
           description?: string | null
           event_date: string
           event_type?: string | null
           id?: string
+          item_kind?: string
+          location?: string | null
+          start_time?: string | null
           title: string
         }
         Update: {
+          assigned_to?: string | null
+          completed?: boolean
           created_at?: string
+          created_by?: string | null
           description?: string | null
           event_date?: string
           event_type?: string | null
           id?: string
+          item_kind?: string
+          location?: string | null
+          start_time?: string | null
           title?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "calendar_events_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       class_schedules: {
         Row: {
@@ -106,6 +132,7 @@ export type Database = {
       }
       classrooms: {
         Row: {
+          class_teacher_id: string | null
           created_at: string
           grade_level: number
           id: string
@@ -114,6 +141,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          class_teacher_id?: string | null
           created_at?: string
           grade_level: number
           id?: string
@@ -122,6 +150,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          class_teacher_id?: string | null
           created_at?: string
           grade_level?: number
           id?: string
@@ -129,7 +158,15 @@ export type Database = {
           teacher_name?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "classrooms_class_teacher_id_fkey"
+            columns: ["class_teacher_id"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       deleted_items: {
         Row: {
@@ -281,30 +318,46 @@ export type Database = {
       }
       incidents: {
         Row: {
+          classroom_id: string | null
           created_at: string
           description: string
           fine_amount: number | null
           id: string
           incident_date: string
+          reported_by: string | null
+          severity: string | null
           student_id: string | null
         }
         Insert: {
+          classroom_id?: string | null
           created_at?: string
           description: string
           fine_amount?: number | null
           id?: string
           incident_date?: string
+          reported_by?: string | null
+          severity?: string | null
           student_id?: string | null
         }
         Update: {
+          classroom_id?: string | null
           created_at?: string
           description?: string
           fine_amount?: number | null
           id?: string
           incident_date?: string
+          reported_by?: string | null
+          severity?: string | null
           student_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "incidents_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "classrooms"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "incidents_student_id_fkey"
             columns: ["student_id"]
@@ -369,6 +422,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      staff: {
+        Row: {
+          contact: string | null
+          created_at: string
+          department: string | null
+          email: string | null
+          full_name: string
+          hire_date: string | null
+          id: string
+          is_active: boolean
+          photo_url: string | null
+          role: string
+          salary: number | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          contact?: string | null
+          created_at?: string
+          department?: string | null
+          email?: string | null
+          full_name: string
+          hire_date?: string | null
+          id?: string
+          is_active?: boolean
+          photo_url?: string | null
+          role?: string
+          salary?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          contact?: string | null
+          created_at?: string
+          department?: string | null
+          email?: string | null
+          full_name?: string
+          hire_date?: string | null
+          id?: string
+          is_active?: boolean
+          photo_url?: string | null
+          role?: string
+          salary?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       students: {
         Row: {
@@ -480,15 +581,46 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      claim_first_maamule: {
+        Args: never
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "maamule" | "macalin" | "maaliyadda"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -615,6 +747,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["maamule", "macalin", "maaliyadda"],
+    },
   },
 } as const

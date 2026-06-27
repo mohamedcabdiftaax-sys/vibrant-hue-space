@@ -1,37 +1,54 @@
-import { Link, Outlet, useLocation } from "@tanstack/react-router";
+import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import {
-  LayoutDashboard,
-  Users,
-  BookOpenCheck,
-  School,
-  Bus,
-  ClipboardList,
-  Wallet,
-  CalendarDays,
-  Settings,
-  ChevronDown,
-  GraduationCap,
+  LayoutDashboard, Users, BookOpenCheck, School, Bus, ClipboardList,
+  Wallet, CalendarDays, Settings, ChevronDown, GraduationCap, LogOut,
+  ShieldAlert, UserCog, Eye,
 } from "lucide-react";
-import { useState, type ComponentType } from "react";
+import { useState, useEffect, type ComponentType } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuthSession, useRoles, type AppRole } from "@/hooks/use-auth";
 
-type NavItem = { to: string; label: string; icon: ComponentType<{ className?: string }> };
+type NavItem = { to: string; label: string; icon: ComponentType<{ className?: string }>; roles: AppRole[] };
 
 const NAV: NavItem[] = [
-  { to: "/", label: "Dashboard-ka Guud", icon: LayoutDashboard },
-  { to: "/ardayda", label: "Maamulka Ardayda", icon: Users },
-  { to: "/casharka", label: "Cashar-Raaca Dugsiga", icon: BookOpenCheck },
-  { to: "/fasallada", label: "Maamulka Fasallada", icon: School },
-  { to: "/gaadiidka", label: "Gaadiidka & Bus-ka", icon: Bus },
-  { to: "/imtixaanada", label: "Imtixaanada & Exams", icon: ClipboardList },
-  { to: "/maaliyadda", label: "Maaliyadda & Kharashka", icon: Wallet },
-  { to: "/kalandar", label: "Kalandarka Maamulka", icon: CalendarDays },
-  { to: "/sifaynta", label: "Sifaynta & Settings", icon: Settings },
+  { to: "/", label: "Dashboard-ka Guud", icon: LayoutDashboard, roles: ["maamule","macalin","maaliyadda"] },
+  { to: "/ardayda", label: "Maamulka Ardayda", icon: Users, roles: ["maamule"] },
+  { to: "/shaqaalaha", label: "Maamulka Shaqaalaha", icon: UserCog, roles: ["maamule"] },
+  { to: "/casharka", label: "Cashar-Raaca Dugsiga", icon: BookOpenCheck, roles: ["maamule","macalin"] },
+  { to: "/fasallada", label: "Maamulka Fasallada", icon: School, roles: ["maamule","macalin"] },
+  { to: "/gaadiidka", label: "Gaadiidka & Bus-ka", icon: Bus, roles: ["maamule"] },
+  { to: "/imtixaanada", label: "Imtixaanada & Exams", icon: ClipboardList, roles: ["maamule","macalin"] },
+  { to: "/dacwo", label: "Dacwo & Anshax", icon: ShieldAlert, roles: ["maamule","macalin"] },
+  { to: "/maaliyadda", label: "Maaliyadda & Kharashka", icon: Wallet, roles: ["maamule","maaliyadda"] },
+  { to: "/kalandar", label: "Kalandarka Maamulka", icon: CalendarDays, roles: ["maamule","macalin","maaliyadda"] },
+  { to: "/sifaynta", label: "Sifaynta & Settings", icon: Settings, roles: ["maamule"] },
 ];
+
+const ROLE_LABEL: Record<AppRole, string> = {
+  maamule: "Maamule",
+  macalin: "Macalin",
+  maaliyadda: "Maaliyadda",
+};
 
 export function DashboardLayout() {
   const location = useLocation();
-  const [role, setRole] = useState<"Maamule" | "Macalin">("Maamule");
+  const navigate = useNavigate();
+  const { user } = useAuthSession();
+  const { primary } = useRoles(user?.id);
+  const [previewRole, setPreviewRole] = useState<AppRole | null>(null);
   const [open, setOpen] = useState(false);
+
+  useEffect(() => { setPreviewRole(null); }, [primary]);
+
+  const realRole: AppRole = primary || "macalin";
+  const activeRole: AppRole = previewRole || realRole;
+  const filteredNav = NAV.filter((n) => n.roles.includes(activeRole));
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    navigate({ to: "/auth" });
+  };
+
   return (
     <div className="min-h-screen flex bg-background text-foreground">
       <aside className="hidden md:flex w-72 shrink-0 flex-col bg-sidebar border-r border-sidebar-border sticky top-0 h-screen">
@@ -45,23 +62,15 @@ export function DashboardLayout() {
           </div>
         </div>
         <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-          {NAV.map((item) => {
-            const active =
-              item.to === "/"
-                ? location.pathname === "/"
-                : location.pathname.startsWith(item.to);
+          {filteredNav.map((item) => {
+            const active = item.to === "/" ? location.pathname === "/" : location.pathname.startsWith(item.to);
             const Icon = item.icon;
             return (
-              <Link
-                key={item.to}
-                to={item.to}
+              <Link key={item.to} to={item.to}
                 className={[
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                  active
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                ].join(" ")}
-              >
+                  active ? "bg-primary text-primary-foreground shadow-sm" : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                ].join(" ")}>
                 <Icon className="size-4 shrink-0" />
                 <span className="truncate">{item.label}</span>
               </Link>
@@ -69,8 +78,9 @@ export function DashboardLayout() {
           })}
         </nav>
         <div className="p-4 m-3 rounded-xl bg-brand-green/10 border border-brand-green/20">
-          <div className="text-xs text-muted-foreground">Caawimaad ma u baahantahay?</div>
-          <div className="text-sm font-semibold text-primary">La xidhiidh maamulka</div>
+          <div className="text-xs text-muted-foreground">Doorka aad ku jirto</div>
+          <div className="text-sm font-semibold text-primary">{ROLE_LABEL[activeRole]}</div>
+          {previewRole && <div className="text-[10px] text-amber-700 mt-1">Daawasho (preview) ahaan</div>}
         </div>
       </aside>
 
@@ -89,31 +99,40 @@ export function DashboardLayout() {
               </div>
             </div>
             <div className="ml-auto relative">
-              <button
-                onClick={() => setOpen((v) => !v)}
-                className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-secondary transition"
-              >
+              <button onClick={() => setOpen((v) => !v)} className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-secondary transition">
                 <div className="size-9 rounded-full bg-gradient-to-br from-brand-green to-primary grid place-items-center text-white font-semibold text-sm">
-                  {role === "Maamule" ? "MM" : "MC"}
+                  {(user?.email || "?").slice(0,2).toUpperCase()}
                 </div>
                 <div className="hidden sm:block text-left">
-                  <div className="text-sm font-semibold leading-tight text-primary">{role}</div>
-                  <div className="text-[11px] text-muted-foreground">Doorka isticmaalaha</div>
+                  <div className="text-sm font-semibold leading-tight text-primary">{ROLE_LABEL[activeRole]}</div>
+                  <div className="text-[11px] text-muted-foreground truncate max-w-[160px]">{user?.email}</div>
                 </div>
                 <ChevronDown className="size-4 text-muted-foreground" />
               </button>
               {open && (
-                <div className="absolute right-0 mt-2 w-56 rounded-xl border border-border bg-card shadow-lg p-2 z-50">
-                  <div className="px-3 py-2 text-[11px] uppercase text-muted-foreground tracking-wider">Beddel Dook</div>
-                  {(["Maamule", "Macalin"] as const).map((r) => (
-                    <button
-                      key={r}
-                      onClick={() => { setRole(r); setOpen(false); }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-secondary ${role === r ? "bg-secondary font-semibold text-primary" : ""}`}
-                    >
-                      {r}
-                    </button>
-                  ))}
+                <div className="absolute right-0 mt-2 w-64 rounded-xl border border-border bg-card shadow-lg p-2 z-50">
+                  <div className="px-3 py-2 border-b border-border">
+                    <div className="text-xs text-muted-foreground">Doorkaaga rasmiga ah</div>
+                    <div className="text-sm font-semibold text-primary">{ROLE_LABEL[realRole]}</div>
+                  </div>
+                  {realRole === "maamule" && (
+                    <>
+                      <div className="px-3 py-2 text-[11px] uppercase text-muted-foreground tracking-wider flex items-center gap-1.5">
+                        <Eye className="size-3"/> Daawo sida door kale
+                      </div>
+                      {(["maamule","macalin","maaliyadda"] as AppRole[]).map((r) => (
+                        <button key={r}
+                          onClick={() => { setPreviewRole(r === "maamule" ? null : r); setOpen(false); }}
+                          className={`w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-secondary ${activeRole === r ? "bg-secondary font-semibold text-primary" : ""}`}>
+                          {ROLE_LABEL[r]}
+                        </button>
+                      ))}
+                      <div className="border-t border-border my-1"/>
+                    </>
+                  )}
+                  <button onClick={signOut} className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-destructive hover:bg-destructive/10">
+                    <LogOut className="size-4"/> Ka Bax
+                  </button>
                 </div>
               )}
             </div>
