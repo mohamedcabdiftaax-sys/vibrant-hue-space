@@ -607,6 +607,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_first_maamule: {
+        Args: never
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
