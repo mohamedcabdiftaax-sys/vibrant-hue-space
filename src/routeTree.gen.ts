@@ -13,11 +13,13 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
 import { Route as AppSifayntaRouteImport } from './routes/_app.sifaynta'
+import { Route as AppShaqaalahaRouteImport } from './routes/_app.shaqaalaha'
 import { Route as AppMaaliyaddaRouteImport } from './routes/_app.maaliyadda'
 import { Route as AppKalandarRouteImport } from './routes/_app.kalandar'
 import { Route as AppImtixaanadaRouteImport } from './routes/_app.imtixaanada'
 import { Route as AppGaadiidkaRouteImport } from './routes/_app.gaadiidka'
 import { Route as AppFasalladaRouteImport } from './routes/_app.fasallada'
+import { Route as AppDacwoRouteImport } from './routes/_app.dacwo'
 import { Route as AppCasharkaRouteImport } from './routes/_app.casharka'
 import { Route as AppArdaydaRouteImport } from './routes/_app.ardayda'
 
@@ -38,6 +40,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
 const AppSifayntaRoute = AppSifayntaRouteImport.update({
   id: '/sifaynta',
   path: '/sifaynta',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppShaqaalahaRoute = AppShaqaalahaRouteImport.update({
+  id: '/shaqaalaha',
+  path: '/shaqaalaha',
   getParentRoute: () => AppRoute,
 } as any)
 const AppMaaliyaddaRoute = AppMaaliyaddaRouteImport.update({
@@ -65,6 +72,11 @@ const AppFasalladaRoute = AppFasalladaRouteImport.update({
   path: '/fasallada',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDacwoRoute = AppDacwoRouteImport.update({
+  id: '/dacwo',
+  path: '/dacwo',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppCasharkaRoute = AppCasharkaRouteImport.update({
   id: '/casharka',
   path: '/casharka',
@@ -81,22 +93,26 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/ardayda': typeof AppArdaydaRoute
   '/casharka': typeof AppCasharkaRoute
+  '/dacwo': typeof AppDacwoRoute
   '/fasallada': typeof AppFasalladaRoute
   '/gaadiidka': typeof AppGaadiidkaRoute
   '/imtixaanada': typeof AppImtixaanadaRoute
   '/kalandar': typeof AppKalandarRoute
   '/maaliyadda': typeof AppMaaliyaddaRoute
+  '/shaqaalaha': typeof AppShaqaalahaRoute
   '/sifaynta': typeof AppSifayntaRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/ardayda': typeof AppArdaydaRoute
   '/casharka': typeof AppCasharkaRoute
+  '/dacwo': typeof AppDacwoRoute
   '/fasallada': typeof AppFasalladaRoute
   '/gaadiidka': typeof AppGaadiidkaRoute
   '/imtixaanada': typeof AppImtixaanadaRoute
   '/kalandar': typeof AppKalandarRoute
   '/maaliyadda': typeof AppMaaliyaddaRoute
+  '/shaqaalaha': typeof AppShaqaalahaRoute
   '/sifaynta': typeof AppSifayntaRoute
   '/': typeof AppIndexRoute
 }
@@ -106,11 +122,13 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_app/ardayda': typeof AppArdaydaRoute
   '/_app/casharka': typeof AppCasharkaRoute
+  '/_app/dacwo': typeof AppDacwoRoute
   '/_app/fasallada': typeof AppFasalladaRoute
   '/_app/gaadiidka': typeof AppGaadiidkaRoute
   '/_app/imtixaanada': typeof AppImtixaanadaRoute
   '/_app/kalandar': typeof AppKalandarRoute
   '/_app/maaliyadda': typeof AppMaaliyaddaRoute
+  '/_app/shaqaalaha': typeof AppShaqaalahaRoute
   '/_app/sifaynta': typeof AppSifayntaRoute
   '/_app/': typeof AppIndexRoute
 }
@@ -121,22 +139,26 @@ export interface FileRouteTypes {
     | '/auth'
     | '/ardayda'
     | '/casharka'
+    | '/dacwo'
     | '/fasallada'
     | '/gaadiidka'
     | '/imtixaanada'
     | '/kalandar'
     | '/maaliyadda'
+    | '/shaqaalaha'
     | '/sifaynta'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
     | '/ardayda'
     | '/casharka'
+    | '/dacwo'
     | '/fasallada'
     | '/gaadiidka'
     | '/imtixaanada'
     | '/kalandar'
     | '/maaliyadda'
+    | '/shaqaalaha'
     | '/sifaynta'
     | '/'
   id:
@@ -145,11 +167,13 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_app/ardayda'
     | '/_app/casharka'
+    | '/_app/dacwo'
     | '/_app/fasallada'
     | '/_app/gaadiidka'
     | '/_app/imtixaanada'
     | '/_app/kalandar'
     | '/_app/maaliyadda'
+    | '/_app/shaqaalaha'
     | '/_app/sifaynta'
     | '/_app/'
   fileRoutesById: FileRoutesById
@@ -189,6 +213,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSifayntaRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/shaqaalaha': {
+      id: '/_app/shaqaalaha'
+      path: '/shaqaalaha'
+      fullPath: '/shaqaalaha'
+      preLoaderRoute: typeof AppShaqaalahaRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/maaliyadda': {
       id: '/_app/maaliyadda'
       path: '/maaliyadda'
@@ -224,6 +255,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFasalladaRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/dacwo': {
+      id: '/_app/dacwo'
+      path: '/dacwo'
+      fullPath: '/dacwo'
+      preLoaderRoute: typeof AppDacwoRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/casharka': {
       id: '/_app/casharka'
       path: '/casharka'
@@ -244,11 +282,13 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppArdaydaRoute: typeof AppArdaydaRoute
   AppCasharkaRoute: typeof AppCasharkaRoute
+  AppDacwoRoute: typeof AppDacwoRoute
   AppFasalladaRoute: typeof AppFasalladaRoute
   AppGaadiidkaRoute: typeof AppGaadiidkaRoute
   AppImtixaanadaRoute: typeof AppImtixaanadaRoute
   AppKalandarRoute: typeof AppKalandarRoute
   AppMaaliyaddaRoute: typeof AppMaaliyaddaRoute
+  AppShaqaalahaRoute: typeof AppShaqaalahaRoute
   AppSifayntaRoute: typeof AppSifayntaRoute
   AppIndexRoute: typeof AppIndexRoute
 }
@@ -256,11 +296,13 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppArdaydaRoute: AppArdaydaRoute,
   AppCasharkaRoute: AppCasharkaRoute,
+  AppDacwoRoute: AppDacwoRoute,
   AppFasalladaRoute: AppFasalladaRoute,
   AppGaadiidkaRoute: AppGaadiidkaRoute,
   AppImtixaanadaRoute: AppImtixaanadaRoute,
   AppKalandarRoute: AppKalandarRoute,
   AppMaaliyaddaRoute: AppMaaliyaddaRoute,
+  AppShaqaalahaRoute: AppShaqaalahaRoute,
   AppSifayntaRoute: AppSifayntaRoute,
   AppIndexRoute: AppIndexRoute,
 }
