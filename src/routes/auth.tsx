@@ -39,7 +39,7 @@ function AuthPage() {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        await supabase.rpc("claim_first_maamule").catch(() => {});
+        try { await supabase.rpc("claim_first_maamule"); } catch {}
         toast.success("Si guul leh ayaad u soo gashay");
       }
       navigate({ to: "/" });

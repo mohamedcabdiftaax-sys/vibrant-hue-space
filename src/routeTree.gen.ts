@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
 import { Route as AppSifayntaRouteImport } from './routes/_app.sifaynta'
@@ -20,6 +21,11 @@ import { Route as AppFasalladaRouteImport } from './routes/_app.fasallada'
 import { Route as AppCasharkaRouteImport } from './routes/_app.casharka'
 import { Route as AppArdaydaRouteImport } from './routes/_app.ardayda'
 
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
@@ -72,6 +78,7 @@ const AppArdaydaRoute = AppArdaydaRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/auth': typeof AuthRoute
   '/ardayda': typeof AppArdaydaRoute
   '/casharka': typeof AppCasharkaRoute
   '/fasallada': typeof AppFasalladaRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/sifaynta': typeof AppSifayntaRoute
 }
 export interface FileRoutesByTo {
+  '/auth': typeof AuthRoute
   '/ardayda': typeof AppArdaydaRoute
   '/casharka': typeof AppCasharkaRoute
   '/fasallada': typeof AppFasalladaRoute
@@ -95,6 +103,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
+  '/auth': typeof AuthRoute
   '/_app/ardayda': typeof AppArdaydaRoute
   '/_app/casharka': typeof AppCasharkaRoute
   '/_app/fasallada': typeof AppFasalladaRoute
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/ardayda'
     | '/casharka'
     | '/fasallada'
@@ -119,6 +129,7 @@ export interface FileRouteTypes {
     | '/sifaynta'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/auth'
     | '/ardayda'
     | '/casharka'
     | '/fasallada'
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_app'
+    | '/auth'
     | '/_app/ardayda'
     | '/_app/casharka'
     | '/_app/fasallada'
@@ -144,10 +156,18 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app': {
       id: '/_app'
       path: ''
@@ -249,6 +269,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
