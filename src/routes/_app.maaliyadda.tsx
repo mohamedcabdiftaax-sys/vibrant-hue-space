@@ -16,8 +16,40 @@ function MaaliyaddaPage() {
   return (
     <div className="space-y-6">
       <PageHeader title="Maaliyadda & Kharashka" breadcrumb="Lacagaha & Kharashaadka Dugsiga" />
+      <FinancialSummary />
       <TuitionSection />
       <ExpensesSection />
+    </div>
+  );
+}
+
+function FinancialSummary() {
+  const month = new Date().toISOString().slice(0, 7);
+  const { data: payments = [] } = useQuery({
+    queryKey: ["fin-sum-payments", month],
+    queryFn: async () => (await supabase.from("tuition_payments").select("amount,paid").eq("month", month).eq("paid", true)).data || [],
+  });
+  const { data: expenses = [] } = useQuery({
+    queryKey: ["fin-sum-expenses", month],
+    queryFn: async () => (await supabase.from("expenses").select("amount,expense_date").gte("expense_date", `${month}-01`).lte("expense_date", `${month}-31`)).data || [],
+  });
+  const collected = (payments as any[]).reduce((s, p) => s + Number(p.amount || 0), 0);
+  const spent = (expenses as any[]).reduce((s, e) => s + Number(e.amount || 0), 0);
+  const net = collected - spent;
+  const cards = [
+    { label: "La Aruuriyay Bishan", value: collected, accent: "from-brand-green/20 to-brand-green/5 text-brand-green border-brand-green/30" },
+    { label: "Kharashka Bishan", value: spent, accent: "from-rose-500/20 to-rose-500/5 text-rose-600 border-rose-500/30" },
+    { label: "Net (Faa'iido/Khasaaro)", value: net, accent: net >= 0 ? "from-primary/20 to-primary/5 text-primary border-primary/30" : "from-amber-500/20 to-amber-500/5 text-amber-600 border-amber-500/30" },
+  ];
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {cards.map((c) => (
+        <div key={c.label} className={`rounded-2xl border bg-gradient-to-br p-5 shadow-sm ${c.accent}`}>
+          <div className="text-xs font-medium opacity-80">{c.label}</div>
+          <div className="mt-2 text-3xl font-bold">${c.value.toLocaleString()}</div>
+          <div className="mt-1 text-[11px] opacity-70">Bisha: {month}</div>
+        </div>
+      ))}
     </div>
   );
 }
