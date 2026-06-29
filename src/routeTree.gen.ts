@@ -16,6 +16,7 @@ import { Route as AppSifayntaRouteImport } from './routes/_app.sifaynta'
 import { Route as AppShaqaalahaRouteImport } from './routes/_app.shaqaalaha'
 import { Route as AppMaaliyaddaRouteImport } from './routes/_app.maaliyadda'
 import { Route as AppKalandarRouteImport } from './routes/_app.kalandar'
+import { Route as AppIsticmaalayaashaRouteImport } from './routes/_app.isticmaalayaasha'
 import { Route as AppImtixaanadaRouteImport } from './routes/_app.imtixaanada'
 import { Route as AppGaadiidkaRouteImport } from './routes/_app.gaadiidka'
 import { Route as AppFasalladaRouteImport } from './routes/_app.fasallada'
@@ -55,6 +56,11 @@ const AppMaaliyaddaRoute = AppMaaliyaddaRouteImport.update({
 const AppKalandarRoute = AppKalandarRouteImport.update({
   id: '/kalandar',
   path: '/kalandar',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppIsticmaalayaashaRoute = AppIsticmaalayaashaRouteImport.update({
+  id: '/isticmaalayaasha',
+  path: '/isticmaalayaasha',
   getParentRoute: () => AppRoute,
 } as any)
 const AppImtixaanadaRoute = AppImtixaanadaRouteImport.update({
@@ -97,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/fasallada': typeof AppFasalladaRoute
   '/gaadiidka': typeof AppGaadiidkaRoute
   '/imtixaanada': typeof AppImtixaanadaRoute
+  '/isticmaalayaasha': typeof AppIsticmaalayaashaRoute
   '/kalandar': typeof AppKalandarRoute
   '/maaliyadda': typeof AppMaaliyaddaRoute
   '/shaqaalaha': typeof AppShaqaalahaRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/fasallada': typeof AppFasalladaRoute
   '/gaadiidka': typeof AppGaadiidkaRoute
   '/imtixaanada': typeof AppImtixaanadaRoute
+  '/isticmaalayaasha': typeof AppIsticmaalayaashaRoute
   '/kalandar': typeof AppKalandarRoute
   '/maaliyadda': typeof AppMaaliyaddaRoute
   '/shaqaalaha': typeof AppShaqaalahaRoute
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   '/_app/fasallada': typeof AppFasalladaRoute
   '/_app/gaadiidka': typeof AppGaadiidkaRoute
   '/_app/imtixaanada': typeof AppImtixaanadaRoute
+  '/_app/isticmaalayaasha': typeof AppIsticmaalayaashaRoute
   '/_app/kalandar': typeof AppKalandarRoute
   '/_app/maaliyadda': typeof AppMaaliyaddaRoute
   '/_app/shaqaalaha': typeof AppShaqaalahaRoute
@@ -143,6 +152,7 @@ export interface FileRouteTypes {
     | '/fasallada'
     | '/gaadiidka'
     | '/imtixaanada'
+    | '/isticmaalayaasha'
     | '/kalandar'
     | '/maaliyadda'
     | '/shaqaalaha'
@@ -156,6 +166,7 @@ export interface FileRouteTypes {
     | '/fasallada'
     | '/gaadiidka'
     | '/imtixaanada'
+    | '/isticmaalayaasha'
     | '/kalandar'
     | '/maaliyadda'
     | '/shaqaalaha'
@@ -171,6 +182,7 @@ export interface FileRouteTypes {
     | '/_app/fasallada'
     | '/_app/gaadiidka'
     | '/_app/imtixaanada'
+    | '/_app/isticmaalayaasha'
     | '/_app/kalandar'
     | '/_app/maaliyadda'
     | '/_app/shaqaalaha'
@@ -234,6 +246,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppKalandarRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/isticmaalayaasha': {
+      id: '/_app/isticmaalayaasha'
+      path: '/isticmaalayaasha'
+      fullPath: '/isticmaalayaasha'
+      preLoaderRoute: typeof AppIsticmaalayaashaRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/imtixaanada': {
       id: '/_app/imtixaanada'
       path: '/imtixaanada'
@@ -286,6 +305,7 @@ interface AppRouteChildren {
   AppFasalladaRoute: typeof AppFasalladaRoute
   AppGaadiidkaRoute: typeof AppGaadiidkaRoute
   AppImtixaanadaRoute: typeof AppImtixaanadaRoute
+  AppIsticmaalayaashaRoute: typeof AppIsticmaalayaashaRoute
   AppKalandarRoute: typeof AppKalandarRoute
   AppMaaliyaddaRoute: typeof AppMaaliyaddaRoute
   AppShaqaalahaRoute: typeof AppShaqaalahaRoute
@@ -300,6 +320,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppFasalladaRoute: AppFasalladaRoute,
   AppGaadiidkaRoute: AppGaadiidkaRoute,
   AppImtixaanadaRoute: AppImtixaanadaRoute,
+  AppIsticmaalayaashaRoute: AppIsticmaalayaashaRoute,
   AppKalandarRoute: AppKalandarRoute,
   AppMaaliyaddaRoute: AppMaaliyaddaRoute,
   AppShaqaalahaRoute: AppShaqaalahaRoute,
@@ -316,3 +337,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

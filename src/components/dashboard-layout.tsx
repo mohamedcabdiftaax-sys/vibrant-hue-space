@@ -2,9 +2,10 @@ import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import {
   LayoutDashboard, Users, BookOpenCheck, School, Bus, ClipboardList,
   Wallet, CalendarDays, Settings, ChevronDown, GraduationCap, LogOut,
-  ShieldAlert, UserCog, Eye,
+  ShieldAlert, UserCog, Eye, UserPlus,
 } from "lucide-react";
 import { useState, useEffect, type ComponentType } from "react";
+import { AiAssistantWidget } from "@/components/ai-assistant-widget";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthSession, useRoles, type AppRole } from "@/hooks/use-auth";
 
@@ -22,6 +23,7 @@ const NAV: NavItem[] = [
   { to: "/maaliyadda", label: "Maaliyadda & Kharashka", icon: Wallet, roles: ["maamule","maaliyadda"] },
   { to: "/kalandar", label: "Kalandarka Maamulka", icon: CalendarDays, roles: ["maamule","macalin","maaliyadda"] },
   { to: "/sifaynta", label: "Sifaynta & Settings", icon: Settings, roles: ["maamule"] },
+  { to: "/isticmaalayaasha", label: "Isticmaalayaasha", icon: UserPlus, roles: ["maamule"] },
 ];
 
 const ROLE_LABEL: Record<AppRole, string> = {
@@ -142,6 +144,7 @@ export function DashboardLayout() {
           <Outlet />
         </main>
       </div>
+      <AiAssistantWidget />
     </div>
   );
 }

@@ -71,17 +71,17 @@ function AuthPage() {
           </div>
           <div>
             <h2 className="text-2xl font-bold text-primary">Soo Gal</h2>
-            <p className="text-sm text-muted-foreground mt-1">Gali akoonkaaga si aad u maamusho dugsiga</p>
+            <p className="text-sm text-muted-foreground mt-1">Gali akoonkaaga si aad u maamusho dugsiga.</p>
           </div>
 
           <form onSubmit={submit} className="space-y-4">
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-foreground">Iimaylka</label>
-              <input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} required placeholder="magaca@example.com" className="w-full h-11 px-3 rounded-lg border border-input bg-background focus:ring-2 focus:ring-primary/30 outline-none" />
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="magaca@example.com" className="w-full h-11 px-3 rounded-lg border border-input bg-background focus:ring-2 focus:ring-primary/30 outline-none" />
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-foreground">Furaha Sirta ah</label>
-              <input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} required minLength={6} placeholder="••••••••" className="w-full h-11 px-3 rounded-lg border border-input bg-background focus:ring-2 focus:ring-primary/30 outline-none" />
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} placeholder="••••••••" className="w-full h-11 px-3 rounded-lg border border-input bg-background focus:ring-2 focus:ring-primary/30 outline-none" />
             </div>
             <button disabled={busy} type="submit" className="w-full h-11 rounded-lg bg-brand-green hover:bg-brand-green/90 text-white font-semibold flex items-center justify-center gap-2 transition shadow-md disabled:opacity-60">
               {busy && <Loader2 className="size-4 animate-spin" />}
@@ -89,8 +89,8 @@ function AuthPage() {
             </button>
           </form>
 
-          <div className="text-center text-xs text-muted-foreground">
-            Diiwaangelinta dadweynaha waa la xidhay. Maamulaha ayaa keliya samayn kara akoonno cusub.
+          <div className="text-center text-xs text-muted-foreground border-t border-border pt-4">
+            Ma haysatid akoon? Maamulaha dugsiga ayaa kuu sameyn doona akoon.
           </div>
         </div>
       </div>
