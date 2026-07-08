@@ -153,3 +153,19 @@
 
   .font-arabic { font-family: "Amiri", "Scheherazade New", "Noto Naskh Arabic", serif; }
 }
+
+@media print {
+  /* Hide sidebar, header, action buttons when printing */
+  aside, nav, header,
+  button:not(.print-show),
+  .ai-widget, [data-widget="ai"] {
+    display: none !important;
+  }
+  main { padding: 0 !important; }
+  body { background: white !important; color: black !important; }
+  .rounded-2xl, .rounded-xl { border-radius: 0 !important; }
+  .shadow-sm, .shadow-md { box-shadow: none !important; }
+  table { page-break-inside: auto; }
+  tr { page-break-inside: avoid; }
+  h1, h2 { color: #1A237E !important; }
+}

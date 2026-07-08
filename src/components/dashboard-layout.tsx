@@ -2,7 +2,7 @@ import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import {
   LayoutDashboard, Users, BookOpenCheck, School, Bus, ClipboardList,
   Wallet, CalendarDays, Settings, ChevronDown, GraduationCap, LogOut,
-  ShieldAlert, UserCog, Eye, UserPlus,
+  ShieldAlert, UserCog, Eye, UserPlus, FileText,
 } from "lucide-react";
 import { useState, useEffect, type ComponentType } from "react";
 import { AiAssistantWidget } from "@/components/ai-assistant-widget";
@@ -22,6 +22,7 @@ const NAV: NavItem[] = [
   { to: "/dacwo", label: "Dacwo & Anshax", icon: ShieldAlert, roles: ["maamule","macalin"] },
   { to: "/maaliyadda", label: "Maaliyadda & Kharashka", icon: Wallet, roles: ["maamule","maaliyadda"] },
   { to: "/kalandar", label: "Kalandarka Maamulka", icon: CalendarDays, roles: ["maamule","macalin","maaliyadda"] },
+  { to: "/reports", label: "Warbixinnada", icon: FileText, roles: ["maamule", "maaliyadda"] },
   { to: "/sifaynta", label: "Sifaynta & Settings", icon: Settings, roles: ["maamule"] },
   { to: "/isticmaalayaasha", label: "Isticmaalayaasha", icon: UserPlus, roles: ["maamule"] },
 ];
