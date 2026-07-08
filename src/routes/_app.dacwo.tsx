@@ -37,13 +37,13 @@ function DacwoPage() {
 
   const { data: incidents = [], isLoading } = useQuery({
     queryKey: ["incidents"],
-    queryFn: async () =>
-      (
-        await supabase
-          .from("incidents")
-          .select("*, students(full_name, grade_level)")
-          .order("incident_date", { ascending: false })
-      ).data || [],
+    queryFn: async () => {
+      const { data: incs } = await supabase.from("incidents").select("*").order("incident_date", { ascending: false });
+      const { data: studs } = await supabase.from("students").select("id, full_name, grade_level");
+      const studMap: Record<string, any> = {};
+      (studs || []).forEach((s: any) => { studMap[s.id] = s; });
+      return (incs || []).map((i: any) => ({ ...i, students: studMap[i.student_id] || null }));
+    },
   });
 
   const filtered = (incidents as any[]).filter((i) => {
@@ -158,7 +158,7 @@ function DacwoPage() {
       {showForm && (
         <IncidentForm
           students={students}
-          reportedBy={user?.email || ""}
+          reportedBy={user?.id || ""}
           onClose={() => setShowForm(false)}
           onSaved={() => {
             setShowForm(false);
