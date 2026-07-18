@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthSession, useRoles } from "@/hooks/use-auth";
 import { useState } from "react";
-import { Users, TrendingUp, TrendingDown, CalendarCheck, Phone, MapPin, UserPlus, Receipt, ClipboardList, CheckCircle2, XCircle, Clock } from "lucide-react";
+import { Users, TrendingUp, TrendingDown, CalendarCheck, Phone, MapPin, UserPlus, Receipt, ClipboardList, CheckCircle2, XCircle, Clock, Activity, ArrowUpRight, GraduationCap, Sparkles } from "lucide-react";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, Legend } from "recharts";
 import { toast } from "sonner";
 
@@ -24,15 +24,20 @@ function useDashboardData() {
       const thisMonth = new Date().toISOString().slice(0, 7);
       const today = new Date().toISOString().slice(0, 10);
 
+      const sixMonthsAgo = new Date();
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
+      const trendStart = new Date(sixMonthsAgo.getFullYear(), sixMonthsAgo.getMonth(), 1).toISOString().slice(0, 10);
+
       const [students, income, outcome, todayAttend, allStudents] = await Promise.all([
         supabase.from("students").select("id", { count: "exact", head: true }).eq("is_active", true),
-        supabase.from("tuition_payments").select("amount, payment_date").eq("paid", true).gte("payment_date", thisMonth + "-01"),
+        supabase.from("tuition_payments").select("amount, payment_date").eq("paid", true).gte("payment_date", trendStart),
         supabase.from("expenses").select("amount, expense_date, category").gte("expense_date", thisMonth + "-01"),
         supabase.from("attendance").select("status").eq("attendance_date", today),
         supabase.from("students").select("grade_level, program_quran, program_boarding, program_xanaano").eq("is_active", true),
       ]);
 
-      const totalIncome = (income.data || []).reduce((s, r) => s + Number(r.amount), 0);
+      const currentMonthIncome = (income.data || []).filter((r) => r.payment_date?.startsWith(thisMonth));
+      const totalIncome = currentMonthIncome.reduce((s, r) => s + Number(r.amount), 0);
       const totalOutcome = (outcome.data || []).reduce((s, r) => s + Number(r.amount), 0);
       const present = (todayAttend.data || []).filter((a: any) => a.status === "present").length;
       const absent = (todayAttend.data || []).filter((a: any) => a.status !== "present").length;
@@ -84,6 +89,7 @@ function useDashboardData() {
         present,
         absent,
         totalAttend: present + absent,
+        attendanceRate: present + absent ? Math.round((present / (present + absent)) * 100) : 0,
         incomeTrend,
         expChart,
         gradeChart,
@@ -96,16 +102,23 @@ function useDashboardData() {
 const COLORS = ["#1A237E", "#2E7D32", "#F59E0B", "#DC2626", "#7C3AED", "#0891B2"];
 
 function KPICard({ label, value, sub, icon: Icon, accent, trend }: any) {
+  const colors: Record<string, string> = {
+    red: "from-rose-500 to-pink-600 shadow-rose-500/20",
+    green: "from-emerald-500 to-green-700 shadow-emerald-500/20",
+    amber: "from-amber-400 to-orange-500 shadow-amber-500/20",
+    blue: "from-indigo-500 to-blue-700 shadow-indigo-500/20",
+  };
+  const iconColor = colors[accent || "blue"];
   return (
-    <div className={`rounded-2xl bg-card border p-5 shadow-sm relative overflow-hidden ${accent === "red" ? "border-rose-200" : accent === "green" ? "border-brand-green/20" : accent === "amber" ? "border-amber-200" : "border-border"}`}>
-      <div className={`absolute -top-8 -right-8 size-28 rounded-full opacity-[0.07] ${accent === "red" ? "bg-rose-500" : accent === "green" ? "bg-brand-green" : accent === "amber" ? "bg-amber-500" : "bg-primary"}`} />
+    <div className="group rounded-2xl bg-card border border-border/70 p-5 shadow-sm hover:-translate-y-0.5 hover:shadow-lg transition-all relative overflow-hidden">
+      <div className="absolute -top-12 -right-12 size-32 rounded-full bg-primary/[0.05] group-hover:scale-125 transition-transform" />
       <div className="flex items-start justify-between">
         <div>
-          <div className="text-xs text-muted-foreground font-medium">{label}</div>
-          <div className={`text-2xl font-bold mt-1 ${accent === "red" ? "text-rose-700" : accent === "green" ? "text-brand-green" : "text-primary"}`}>{value}</div>
-          {sub && <div className="text-xs text-muted-foreground mt-0.5">{sub}</div>}
+          <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">{label}</div>
+          <div className="text-2xl font-extrabold tracking-tight mt-1.5 text-primary">{value}</div>
+          {sub && <div className="text-xs text-muted-foreground mt-1">{sub}</div>}
         </div>
-        <div className={`size-12 rounded-2xl grid place-items-center shadow-sm ${accent === "red" ? "bg-rose-500" : accent === "green" ? "bg-brand-green" : accent === "amber" ? "bg-amber-500" : "bg-primary"}`}>
+        <div className={`size-11 rounded-2xl grid place-items-center bg-gradient-to-br shadow-lg ${iconColor}`}>
           <Icon className="size-6 text-white" />
         </div>
       </div>
@@ -190,19 +203,24 @@ export function Dashboard() {
   const isMaamule = primary === "maamule";
   const isMaaliyadda = primary === "maaliyadda";
   const isMacalin = primary === "macalin";
+  const todayLabel = new Intl.DateTimeFormat("so-SO", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(new Date());
 
   return (
     <div className="space-y-6">
       {/* School header / branding */}
-      <div className="rounded-2xl bg-gradient-to-r from-primary to-primary/80 text-white p-5 flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <div className="font-bold text-xl">{SCHOOL.name}</div>
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#172554] via-primary to-[#2563a7] text-white p-6 md:p-8 shadow-xl shadow-primary/20 flex items-center justify-between flex-wrap gap-6">
+        <div className="absolute -right-16 -top-16 size-64 rounded-full bg-white/10" />
+        <div className="absolute right-28 -bottom-28 size-56 rounded-full border-[28px] border-white/[0.07]" />
+        <div className="relative z-10">
+          <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[11px] font-bold tracking-wide"><span className="size-2 rounded-full bg-emerald-300 animate-pulse" /> NIDAAMKU WAA SHAQAYNAYAA</div>
+          <div className="font-extrabold tracking-tight text-xl md:text-2xl mt-3">{SCHOOL.name}</div>
           <div className="flex items-center gap-4 mt-1.5 text-white/80 text-xs flex-wrap gap-y-1">
+            <span className="flex items-center gap-1"><CalendarCheck className="size-3" /> {todayLabel}</span>
             <span className="flex items-center gap-1"><Phone className="size-3" /> {SCHOOL.tel1} · {SCHOOL.tel2}</span>
             <span className="flex items-center gap-1"><MapPin className="size-3" /> {SCHOOL.location}</span>
           </div>
         </div>
-        <div className="text-right">
+        <div className="relative z-10 text-right rounded-2xl bg-white/10 border border-white/15 backdrop-blur-sm px-5 py-4">
           <div className="text-xs text-white/70">Doorkaaga</div>
           <div className="font-semibold capitalize">{primary === "maamule" ? "Maamule Guud" : primary === "maaliyadda" ? "Maaliyadda" : "Macalin"}</div>
         </div>
@@ -223,7 +241,7 @@ export function Dashboard() {
           <KPICard
             label="Imaanshaha Maanta"
             value={isLoading ? "..." : `${data?.present || 0} / ${data?.totalAttend || 0}`}
-            sub={`${data?.absent || 0} arday maqan`}
+            sub={data?.totalAttend ? `${data?.attendanceRate}% joogitaan · ${data?.absent || 0} maqan` : "Yeeris lama diiwaangelin"}
             icon={CalendarCheck}
             accent="amber"
           />
@@ -239,22 +257,22 @@ export function Dashboard() {
         <div className="lg:col-span-2 space-y-6">
           {/* Quick actions */}
           {(isMaamule || isMacalin) && (
-            <div className="rounded-2xl bg-card border border-border p-5 shadow-sm">
-              <div className="font-semibold text-primary mb-3">Tallaabooyin Degdeg ah</div>
+            <div className="rounded-2xl bg-card border border-border/70 p-5 shadow-sm">
+              <div className="flex items-center justify-between mb-4"><div><div className="font-bold text-primary">Tallaabooyin Degdeg ah</div><div className="text-xs text-muted-foreground mt-0.5">Ku maamul hawlaha maalinlaha ah hal meel.</div></div><Sparkles className="size-5 text-amber-500" /></div>
               <div className="grid grid-cols-3 gap-3">
-                <Link to="/ardayda" className="rounded-xl border-2 border-dashed border-primary/30 hover:border-primary hover:bg-primary/5 p-4 text-center transition">
+                <Link to="/ardayda" className="group rounded-xl border border-primary/15 bg-primary/[0.03] hover:border-primary hover:bg-primary/5 p-4 text-center transition">
                   <UserPlus className="size-7 mx-auto text-primary mb-1.5" />
-                  <div className="font-semibold text-primary text-xs">+ Diiwaangeli Arday</div>
+                  <div className="font-semibold text-primary text-xs">Diiwaangeli Arday</div><ArrowUpRight className="size-3 mx-auto mt-1 text-primary/50 group-hover:text-primary" />
                 </Link>
                 {(isMaamule || isMaaliyadda) && (
-                  <Link to="/maaliyadda" className="rounded-xl border-2 border-dashed border-brand-green/30 hover:border-brand-green hover:bg-brand-green/5 p-4 text-center transition">
+                  <Link to="/maaliyadda" className="group rounded-xl border border-emerald-500/20 bg-emerald-500/[0.03] hover:border-emerald-500 hover:bg-emerald-500/5 p-4 text-center transition">
                     <Receipt className="size-7 mx-auto text-brand-green mb-1.5" />
-                    <div className="font-semibold text-brand-green text-xs">+ Log Expense</div>
+                    <div className="font-semibold text-brand-green text-xs">Maaliyadda</div><ArrowUpRight className="size-3 mx-auto mt-1 text-brand-green/50 group-hover:text-brand-green" />
                   </Link>
                 )}
-                <Link to="/imtixaanada" className="rounded-xl border-2 border-dashed border-amber-300 hover:border-amber-500 hover:bg-amber-50 p-4 text-center transition">
+                <Link to="/imtixaanada" className="group rounded-xl border border-amber-400/30 bg-amber-500/[0.04] hover:border-amber-500 hover:bg-amber-500/10 p-4 text-center transition">
                   <ClipboardList className="size-7 mx-auto text-amber-600 mb-1.5" />
-                  <div className="font-semibold text-amber-700 text-xs">Imtixaan Cusub</div>
+                  <div className="font-semibold text-amber-700 text-xs">Imtixaannada</div><ArrowUpRight className="size-3 mx-auto mt-1 text-amber-600/50 group-hover:text-amber-600" />
                 </Link>
               </div>
             </div>
